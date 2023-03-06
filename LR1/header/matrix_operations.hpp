@@ -4,19 +4,20 @@
 #include <numeric>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 template<typename T>
-void print_vector(const std::vector<T>& v) {
+void print_vector(const std::vector<T>& v, size_t setw) {
     std::cout << "( ";
     for (const auto& el : v) {
-        std::cout << el << " ";
+        std::cout << std::setw(setw) << el << " ";
     }
     std::cout << ")" << std::endl;
 }
 template<typename T>
-void print_matrix(const std::vector<std::vector<T>>& m) {
+void print_matrix(const std::vector<std::vector<T>>& m, size_t setw = 7) {
     for (const auto& row : m) {
-        print_vector(row);
+        print_vector(row, setw);
     }
 }
 

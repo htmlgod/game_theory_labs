@@ -7,6 +7,14 @@ TEST(QUOTIENT_TEST, construction_default) {
     EXPECT_EQ(q1.get_m(), 0);
     EXPECT_EQ(q1.get_n(), 1);
 }
+TEST(QUOTIENT_TEST, less_compare) {
+    Q q1 = {1,2};
+    Q q2 = {1,4};
+    EXPECT_TRUE(q1 > q2);
+    Q q3 = {6,4};
+    Q q4 = {6,3};
+    EXPECT_TRUE(q3 < q4);
+}
 TEST(QUOTIENT_TEST, construction_from_int) {
     Q q2{12};
     EXPECT_EQ(q2.get_m(), 12);

@@ -12,7 +12,9 @@ bool is_number(const std::string& s)
 class Q {
 public:
     Q(): m{0}, n{1} {}
-    Q(int32_t m, size_t n = 1): m{m}, n{n} {}
+    Q(int32_t m, size_t n = 1): m{m}, n{n} {
+        normalize(this->m, this->n);
+    }
     Q(const std::string& str) { 
         std::stringstream ss(str);
         char skip;
@@ -52,6 +54,12 @@ public:
     size_t get_n() const {
         return n;
     }
+    float to_float() const {
+        if (n != 0) {
+            return static_cast<float>(m)/n;
+        }
+        return 10000;
+    }
     std::string to_string() const {
         if (m != n) {
             auto str_m = std::to_string(m);
@@ -62,6 +70,20 @@ public:
                 return str_m;
         }
         return "1";
+    }
+    friend inline bool operator<(Q lhs, Q rhs) {
+        auto lcm = std::lcm(lhs.n, rhs.n);
+        return (lhs*lcm).m < (rhs*lcm).m;
+    }
+    friend inline bool operator>(Q lhs, Q rhs) {
+        auto lcm = std::lcm(lhs.n, rhs.n);
+        return (lhs*lcm).m > (rhs*lcm).m;
+    }
+    friend inline bool operator>=(Q lhs, Q rhs) {
+        return !(lhs < rhs);
+    }
+    friend inline bool operator<=(Q lhs, Q rhs) {
+        return !(lhs > rhs);
     }
     friend inline bool operator==(const Q& lhs, const std::string& rhs) {
         return lhs.to_string() == rhs;

@@ -9,30 +9,27 @@ HunterGate(
 )
 
 project(Lab2)
-# option for testing
 option(BUILD_TESTS "Build tests" OFF)
-
-# use add_subdirectory to add 3rd party lib
-#add_subdirectory(third_party/lib)
 
 hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
-# define cpp files here
 add_executable(
-    matrix_method
-    ${CMAKE_CURRENT_SOURCE_DIR}/source/matrix_method.cpp
+    solve_by_matrix_metod
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/solve_by_matrix_metod.cpp
+)
+add_executable(
+    solve_by_br_method
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/solve_by_br_method.cpp
 )
 
-# define cpp files here
-#add_library(
-#    lib_name
-#    ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
-#)
-
-# define more include directories here
 target_include_directories(
-    matrix_method
+    solve_by_matrix_method
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/header
+)
+target_include_directories(
+    solve_by_br_method
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/header
 )
@@ -66,7 +63,35 @@ if(BUILD_TESTS)
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/header
     )
+    add_executable(
+      matrix_method_test
+      tests/matrix_method_test.cpp
+    )
+    target_link_libraries(
+      matrix_method_test
+      GTest::gtest_main
+    )
+    target_include_directories(
+        matrix_method_test
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/header
+    )
+    add_executable(
+      br_method_test
+      tests/matrix_method_test.cpp
+    )
+    target_link_libraries(
+      br_method_test
+      GTest::gtest_main
+    )
+    target_include_directories(
+        br_method_test
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/header
+    )
     include(GoogleTest)
     gtest_discover_tests(quotient_test)
     gtest_discover_tests(linal_test)
+    gtest_discover_tests(matrix_method_test)
+    gtest_discover_tests(br_method_test)
 endif()
