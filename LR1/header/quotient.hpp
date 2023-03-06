@@ -9,6 +9,7 @@ bool is_number(const std::string& s)
     return !s.empty() && std::find_if(s.begin(), 
         s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 }
+
 class Q {
 public:
     Q(): m{0}, n{1} {}
@@ -28,7 +29,10 @@ public:
         }
     }
     Q(const Q& q): m{q.m}, n{q.n} {}
-    Q(Q&& q): m{std::move(q.m)}, n{std::move(q.n)} {}
+    Q(Q&& q) noexcept {
+        this->m = std::move(q.m);
+        this->n = std::move(q.n);
+    }
     Q& inverse() {
         auto buf = this->n;
         bool is_negative = this->m < 0;

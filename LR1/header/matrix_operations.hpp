@@ -54,7 +54,7 @@ auto get_transposed_matrix(const std::vector<std::vector<T>>& matrix) {
 
 template<typename T>
 std::vector<T> vector_matrix_mul(const std::vector<T>& vec, const std::vector<std::vector<T>>& matrix) {
-    if (vec.size() != matrix.size()) throw std::logic_error{"Vector and matrix row dimensions are different!"};
+    if (vec.size() != matrix[0].size()) throw std::logic_error{"Vector and matrix row dimensions are different!"};
     std::vector<T> result;
     result.reserve(vec.size());
 
