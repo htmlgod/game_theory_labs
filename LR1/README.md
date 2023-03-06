@@ -1,9 +1,22 @@
 # Лабораторная работа №2
 Цель работы - Изучение аналитического (обратной матрицы) и численного (Брауна-Робинсона) методов нахождения смешанных стратегий в антагонистической игре двух лиц в нормальной форме.
 
-## TODO
-- [] Matrix method tests
+## TODO COMMON
+
 - [] Quotient class division
+- [] File i/o
+- [] CLI args 
+- [] Usage statement
+
+## TODO MATRIX METHOD
+
+- [] Tests
+
+## TODO BR METHOD
+
+- [] Option to use random strat selection or user defined
+- [] Option to use strat selection path (e.g array with indexes of strats to select from when we have multiply variants of strategies)
+- [] Tests
 
 ## Build and Run
 ```
