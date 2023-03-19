@@ -5,16 +5,6 @@
 #include <matrix_operations.hpp>
 #include <quotient.hpp>
 
-template<typename T>
-void fill(std::vector<std::vector<T> >& vec, size_t size){
-    vec.resize(size);
-    for(int i = 0; i < size; i++){
-        vec[i].resize(size);
-        for(int j = 0; j < size; j++){
-            std::cin >> vec[i][j];
-        }
-    }
-}
 
 size_t get_max_element_index(const std::vector<size_t>& vec) {
     return std::distance(vec.begin(), std::max_element(vec.begin(), vec.end()));

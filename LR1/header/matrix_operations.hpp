@@ -7,6 +7,17 @@
 #include <iomanip>
 
 template<typename T>
+void fill(std::vector<std::vector<T> >& vec, size_t size){
+    vec.resize(size);
+    for(int i = 0; i < size; i++){
+        vec[i].resize(size);
+        for(int j = 0; j < size; j++){
+            std::cin >> vec[i][j];
+        }
+    }
+}
+
+template<typename T>
 void print_vector(const std::vector<T>& v, size_t setw) {
     std::cout << "( ";
     for (const auto& el : v) {
