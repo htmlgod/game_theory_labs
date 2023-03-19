@@ -11,11 +11,9 @@ public:
     MatrixMethodSolver(const std::vector<std::vector<T>>& matrix) {
         std::copy(matrix.begin(), matrix.end(), std::back_inserter(game_matrix));
         size = matrix.size();
-        std::cout << size << std::endl;
     }
     void init() {
         u = std::vector<T>(size, T{1});
-        print_vector(u,1);
         inverse_game_matrix = get_inversed_matrix(game_matrix);
     }
     auto get_u_vector() const {
@@ -26,11 +24,11 @@ public:
         if (common_value == T{}) throw std::logic_error{"Call solve() method first"};
         return common_value;
     }
-    auto get_solution_playerA() const {
+    auto get_solution_playerB() const {
         if (player_A_strategies.empty()) throw std::logic_error{"Call solve() method first"};
         return player_A_strategies;
     }
-    auto get_solution_playerB() const {
+    auto get_solution_playerA() const {
         if (player_B_strategies.empty()) throw std::logic_error{"Call solve() method first"};
         return player_B_strategies;
     }
@@ -54,7 +52,7 @@ private:
         player_A_strategies = vector_number_div(common_value, player_A_strategies);
     }
     void compute_player_B_strategies() {
-        player_B_strategies = vector_matrix_mul(u, inverse_game_matrix);
+        player_B_strategies = matrix_vector_mul(inverse_game_matrix, u);
         player_B_strategies = vector_number_div(common_value, player_B_strategies);
     }
     std::vector<std::vector<T>> game_matrix;
