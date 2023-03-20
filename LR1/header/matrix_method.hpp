@@ -1,7 +1,6 @@
 #pragma once
-#include <type_traits>
+#include <tuple>
 
-#include <iostream>
 #include <quotient.hpp>
 #include <matrix_operations.hpp>
 
@@ -34,13 +33,15 @@ public:
     }
     auto get_gamecost(T delta) const {
         if (common_value == T{}) throw std::logic_error{"Call solve() method first"};
-        return (common_value - delta).inverse().to_float(); //TODO: fix later
-        //return (1./common_value) - delta;
+        return (1./common_value) - delta;
     }
     void solve() {
         compute_common_value();
         compute_player_A_strategies();
         compute_player_B_strategies();
+    }
+    std::tuple<T, std::vector<T>, std::vector<T>> get_solution(T delta) const {
+        return {get_gamecost(delta), player_B_strategies, player_A_strategies};
     }
 private:
     void compute_common_value() {
@@ -63,3 +64,8 @@ private:
     std::vector<T> player_B_strategies;
     T common_value;
 };
+template<>
+auto MatrixMethodSolver<Q>::get_gamecost(Q delta) const {
+    if (common_value == Q{}) throw std::logic_error{"Call solve() method first"};
+    return (common_value - delta).inverse();
+}

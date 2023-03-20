@@ -15,21 +15,12 @@ hunter_add_package(GTest)
 find_package(GTest CONFIG REQUIRED)
 
 add_executable(
-    solve_by_matrix_method
-    ${CMAKE_CURRENT_SOURCE_DIR}/source/solve_by_matrix_method.cpp
-)
-add_executable(
-    solve_by_br_method
-    ${CMAKE_CURRENT_SOURCE_DIR}/source/solve_by_br_method.cpp
+    solver
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/solver.cpp
 )
 
 target_include_directories(
-    solve_by_matrix_method
-    PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/header
-)
-target_include_directories(
-    solve_by_br_method
+    solver
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/header
 )

@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <quotient.hpp>
 
 template<typename T>
 void fill(std::vector<std::vector<T> >& vec, size_t size){
@@ -47,6 +48,12 @@ std::vector<T> number_vector_mul(const T& num, const std::vector<T>& vec) {
 }
 template<typename T>
 std::vector<T> vector_number_div(const T& num, const std::vector<T>& vec) {
+    auto inv_num = 1./num;
+    return number_vector_mul(inv_num, vec);
+}
+
+template<>
+std::vector<Q> vector_number_div(const Q& num, const std::vector<Q>& vec) {
     auto inv_num = num;
     return number_vector_mul(inv_num.inverse(), vec);
 }
