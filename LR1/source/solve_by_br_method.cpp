@@ -1,10 +1,4 @@
-#include <cstdlib>
-#include <ctime>
-#include <map>
-
-#include <matrix_operations.hpp>
-#include <quotient.hpp>
-
+#include <br_method.hpp>
 
 size_t get_max_element_index(const std::vector<size_t>& vec) {
     return std::distance(vec.begin(), std::max_element(vec.begin(), vec.end()));
@@ -40,6 +34,15 @@ size_t get_new_strat_A(const std::vector<size_t>& vec, bool rand_decide = false)
         }
         return max_indexes[std::rand() % max_indexes.size()];
     }
+}
+void print_header(size_t size = 3) {
+    std::cout << std::setw(3) << "STEP" << " | "
+              << std::setw(3) << "  x " << " | "
+              << std::setw(3) << "  y " << " | ";
+    std::cout << std::setw(4*size) << "A wins            " << " | ";
+    std::cout << std::setw(4*size) << "B Loses           " << " | ";
+    std::cout << std::setw(8) << "UGC" << " | " << std::setw(8) << "LGC" << " | " << "EPSILON";
+    std::cout << std::endl;
 }
 
 size_t get_new_strat_B(const std::vector<size_t>& vec, bool rand_decide = false) {
@@ -79,7 +82,7 @@ Q compute_epsilon(const std::vector<Q>& ugc, const std::vector<Q>& lgc) {
 }
 
 void print_step(size_t step, size_t stratA, size_t stratB, const std::vector<size_t>& Awin, const std::vector<size_t>& Blose, Q ugc, Q lgc, Q epsilon) {
-    std::cout << std::setw(3) << step << " | "
+    std::cout << std::setw(4) << step << " | "
               << std::setw(3) << "x" << stratA+1 << " | "
               << std::setw(3) << "y" << stratB+1 << " | ";
     for (size_t el : Awin) std::cout << std::setw(4) << el << " | ";
@@ -128,6 +131,7 @@ auto main(int argc, char** argv) -> int {
     Q eps;
     Q desired_epsilon{1,10};
     eps = compute_epsilon(upper_game_costs, lower_game_costs);
+    print_header(size);
     print_step(K, A_strat, B_strat, playerA_win, playerB_lose, upper_game_costs[K-1], lower_game_costs[K-1], eps);
     while (eps >= desired_epsilon) {
 
@@ -158,12 +162,16 @@ auto main(int argc, char** argv) -> int {
         eps = compute_epsilon(upper_game_costs, lower_game_costs);
         print_step(K, A_strat, B_strat, playerA_win, playerB_lose, upper_game_costs[K-1], lower_game_costs[K-1], eps);
     }
+    auto gc = (get_min_element(upper_game_costs).to_float() + get_max_element(lower_game_costs).to_float()) / 2;
+    std::cout << "Game Cost = " << gc << std::endl;
+    std::cout << "Strategies A" << std::endl;
     for (const auto&[key, value] : strat_usageA) {
         Q q{static_cast<int32_t>(value)};
         std::cout << q * Q{1,K} << " ";
 
     }
     std::cout << std::endl;
+    std::cout << "Strategies B" << std::endl;
     for (const auto&[key, value] : strat_usageB) {
         Q q{static_cast<int32_t>(value)};
         std::cout << q * Q{1,K} << " ";

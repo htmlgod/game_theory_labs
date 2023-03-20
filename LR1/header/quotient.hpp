@@ -47,6 +47,10 @@ public:
         this->m = other.m;
         return *this;
     }
+    Q& operator=(const std::string& str) {
+        *this = Q(str);
+        return *this;
+    }
     Q& operator=(Q&& other) {
         this->n = std::move(other.n);
         this->m = std::move(other.m);
