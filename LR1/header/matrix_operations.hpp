@@ -8,6 +8,25 @@
 #include <quotient.hpp>
 
 template<typename T>
+T get_max_element(const std::vector<T>& vec) {
+    return *std::max_element(vec.begin(), vec.end());
+}
+
+template<typename T>
+T get_min_element(const std::vector<T>& vec) {
+    return *std::min_element(vec.begin(), vec.end());
+}
+template<typename T>
+size_t get_max_element_index(const std::vector<T>& vec) {
+    return std::distance(vec.begin(), std::max_element(vec.begin(), vec.end()));
+}
+
+template<typename T>
+size_t get_min_element_index(const std::vector<T>& vec) {
+    return std::distance(vec.begin(), std::min_element(vec.begin(), vec.end()));
+}
+
+template<typename T>
 void fill(std::vector<std::vector<T> >& vec, size_t size){
     vec.resize(size);
     for(int i = 0; i < size; i++){

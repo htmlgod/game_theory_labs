@@ -7,7 +7,7 @@
 template <typename T>
 class MatrixMethodSolver {
 public:
-    MatrixMethodSolver(const std::vector<std::vector<T>>& matrix) {
+    explicit MatrixMethodSolver(const std::vector<std::vector<T>>& matrix) {
         std::copy(matrix.begin(), matrix.end(), std::back_inserter(game_matrix));
         size = matrix.size();
     }
@@ -31,7 +31,7 @@ public:
         if (player_B_strategies.empty()) throw std::logic_error{"Call solve() method first"};
         return player_B_strategies;
     }
-    auto get_gamecost(T delta) const {
+    auto get_gamecost(const T& delta) const {
         if (common_value == T{}) throw std::logic_error{"Call solve() method first"};
         return (1./common_value) - delta;
     }
@@ -40,7 +40,7 @@ public:
         compute_player_A_strategies();
         compute_player_B_strategies();
     }
-    std::tuple<T, std::vector<T>, std::vector<T>> get_solution(T delta) const {
+    [[nodiscard]] std::tuple<T, std::vector<T>, std::vector<T>> get_solution(T delta) const {
         return {get_gamecost(delta), player_B_strategies, player_A_strategies};
     }
 private:
@@ -65,7 +65,7 @@ private:
     T common_value;
 };
 template<>
-auto MatrixMethodSolver<Q>::get_gamecost(Q delta) const {
+auto MatrixMethodSolver<Q>::get_gamecost(const Q& delta) const {
     if (common_value == Q{}) throw std::logic_error{"Call solve() method first"};
     return (common_value - delta).inverse();
 }
