@@ -47,14 +47,14 @@ public:
                     playerA_win.end(),
                     tmp.begin(),
                     playerA_win.begin(),
-                    std::plus<size_t>{}
+                    std::plus<T>{}
             );
             std::transform(
                     playerB_lose.begin(),
                     playerB_lose.end(),
                     game_matrix[A_strategy].begin(),
                     playerB_lose.begin(),
-                    std::plus<size_t>{}
+                    std::plus<T>{}
             );
             upper_game_costs.push_back(compute_upper_game_cost(playerA_win));
             lower_game_costs.push_back(compute_lower_game_cost(playerB_lose));
@@ -168,8 +168,8 @@ private:
         std::cout << std::setw(4) << K << " | "
                   << std::setw(3) << "x" << A_strategy+1 << " | "
                   << std::setw(3) << "y" << B_strategy+1 << " | ";
-        for (size_t el : playerA_win) std::cout << std::setw(4) << el << " | ";
-        for (size_t el : playerB_lose) std::cout << std::setw(4) << el << " | ";
+        for (T el : playerA_win) std::cout << std::setw(4) << el << " | ";
+        for (T el : playerB_lose) std::cout << std::setw(4) << el << " | ";
         std::cout << std::setw(8) << upper_game_costs[K-1] << " | " << std::setw(8) << lower_game_costs[K-1] << " | " << epsilon;
         std::cout << std::endl;
     }
