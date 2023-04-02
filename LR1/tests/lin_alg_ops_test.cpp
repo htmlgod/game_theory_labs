@@ -79,3 +79,30 @@ TEST(MATRIX_OPS_TEST, inverse_matrix) {
     auto inversed = get_inversed_matrix(matrix);
     EXPECT_EQ(inversed, ans);
 }
+TEST(MATRIX_OPS_TEST, nbr_row_reduction) {
+    std::vector<std::vector<double>> matrix1 = {
+            {2, 1},
+            {3, 0},
+            {1, 2}
+    };
+    std::vector<std::vector<double>> ans1 = {
+            {3, 0},
+            {1, 2}
+    };
+    auto reduced = get_reduced_matrix_by_indexes(matrix1, get_nbr_rows_indexes(matrix1));
+    EXPECT_EQ(reduced, ans1);
+}
+TEST(MATRIX_OPS_TEST, dominated_rows_reduction) {
+    std::vector<std::vector<double>> matrix1 = {
+        {2, 1},
+        {3, 1},
+        {1, 2},
+        {1, 1}
+    };
+    std::vector<std::vector<double>> ans1 = {
+        {3, 1},
+        {1, 2}
+    };
+    auto reduced = get_reduced_matrix_by_indexes(matrix1, get_dominated_rows_indexes(matrix1));
+    EXPECT_EQ(reduced, ans1);
+}
