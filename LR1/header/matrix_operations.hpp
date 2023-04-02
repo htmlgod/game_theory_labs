@@ -8,6 +8,15 @@
 #include <iomanip>
 #include <quotient.hpp>
 
+template <typename T>
+std::vector<T> operator+(std::vector<T> lhs, std::vector<T> rhs) {
+    assert(lhs.size() == rhs.size());
+    std::vector<T> res;
+    res.resize(lhs.size());
+    std::transform(lhs.begin(), lhs.end(), rhs.begin(), res.begin(), std::plus<>());
+    return res;
+}
+
 template<typename T>
 T get_max_element(const std::vector<T>& vec) {
     return *std::max_element(vec.begin(), vec.end());
@@ -39,7 +48,7 @@ void fill(std::vector<std::vector<T> >& vec, size_t size){
 }
 
 template<typename T>
-void print_vector(const std::vector<T>& v, size_t setw) {
+void print_vector(const std::vector<T>& v, size_t setw = 3) {
     std::cout << "( ";
     for (const auto& el : v) {
         std::cout << std::setw(setw) << el << " ";
