@@ -115,13 +115,12 @@ public:
             }
             std::cout << "V = ";
             std::cout << lower_game_cost << std::endl;
-            //J.insert(get_min_element_index(c_current));
         }
     }
     [[nodiscard]] std::tuple<T, std::vector<T>> get_solution() const {
         return {lower_game_cost, x_prev};
     }
-// private:
+private:
     vec compute_c_iter(vec x_iter) {
         vec res = vec(x_iter.size(), 0);
         for (size_t i = 0; i < x_iter.size(); ++i) {
@@ -147,27 +146,14 @@ public:
         return get_transposed_matrix(res);
     }
     std::vector<T> solve_2x2game(const matrix& m) {
-//        MatrixMethodSolver<double> m_solver{m};
-//        m_solver.init();
-//        m_solver.solve();
-//        auto[gc, player_A_solution, player_B_solution] = m_solver.get_solution(0);
-//        return player_A_solution;
         auto x1 = (m[1][1] - m[1][0]) / (m[0][0] - m[1][0] - m[0][1] + m[1][1]);
         auto x2 = 1 - x1;
         return {x1,x2};
     }
-//    bool is_2xn_game_has_dominant_row(const matrix& gm) {
-//        bool r1_dom_r2 = std::equal(gm[0].begin(), gm[0].end(), gm[1].begin(), [](T el1, T el2) { return el1 >= el2; });
-//        bool r2_dom_r1 = std::equal(gm[1].begin(), gm[1].end(), gm[0].begin(), [](T el1, T el2) { return el1 >= el2; });
-//        return (r1_dom_r2 or r2_dom_r1);
-//    }
 
     std::set<size_t> reduce_gm_to_2x2(matrix& gm) {
         std::set<size_t> row_indexes;
         for (;;) {
-//            std::cout << "$$$$$$$$$$$$$$$$$$$$" << std::endl;
-//            print_matrix(gm);
-//            std::cout << "$$$$$$$$$$$$$$$$$$$$" << std::endl;
             if (gm.size() <= 2 and gm[0].size() <= 2) break;
             // cols >= rows
             if (gm[0].size() >= gm.size()) {
@@ -193,8 +179,6 @@ public:
                     gm = get_reduced_matrix_by_indexes(gm, dom_indexes);
                 }
             }
-//            char c;
-//            std::cin >> c;
         }
         return row_indexes;
     }
@@ -206,6 +190,12 @@ auto main() -> int {
             {1, 6, 19},
             {17, 11, 11}
     };
+    std::vector<std::vector<double>> B = {
+        {-8, -12, -10},
+        {-1, -6, -19},
+        {-17, -11, -11}
+    };
+    B = get_transposed_matrix(B);
 //    std::vector<std::vector<double>> A = {
 //            {2, 1, 3},
 //            {3, 0, 1},
@@ -219,19 +209,29 @@ auto main() -> int {
 //            {9, 8, 3, 4, 3}
 //    };
 //    std::vector<double> res(5, 1);
-    SadovskyIterMethodSolver solver(A);
-//    auto ind = solver.reduce_gm_to_2x2(A);
-//    print_matrix(A);
-//
-//    for (auto i : ind) {
-//        res[i] = 0;
-//    }
-//    print_vector(res);
-     solver.solve();
-     auto [gc, strat] = solver.get_solution();
+    std::cout << "Player A" << '\n';
+    {
+        SadovskyIterMethodSolver solver(A);
 
-     std::cout << "Solution: " << std::endl;
-     std::cout << "Game cost: " << gc << std::endl;
-     std::cout << "Player A strat: ";
-     print_vector(strat);
+        solver.solve();
+        auto [gc, strat] = solver.get_solution();
+        // solve for second
+        std::cout << "Solution: " << std::endl;
+        std::cout << "Game cost: " << gc << std::endl;
+        std::cout << "Player A strat: ";
+        print_vector(strat);
+    }
+    std::cout << "Player B" << '\n';
+    {
+        SadovskyIterMethodSolver solver(B);
+
+        solver.solve();
+        auto [gc, strat] = solver.get_solution();
+        // solve for second
+        std::cout << "Solution: " << std::endl;
+        std::cout << "Game cost: " << -gc << std::endl;
+        std::cout << "Player B strat: ";
+        print_vector(strat);
+    }
+
 }

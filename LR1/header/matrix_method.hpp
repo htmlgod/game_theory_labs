@@ -1,5 +1,6 @@
 #pragma once
 #include <tuple>
+#include <cassert>
 
 #include <quotient.hpp>
 #include <matrix_operations.hpp>
