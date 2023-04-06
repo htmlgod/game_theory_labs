@@ -1,5 +1,5 @@
-#include <matrix_operations.hpp>
-#include <quotient.hpp>
+#include <common/matrix_operations.hpp>
+#include <common/quotient.hpp>
 #include <gtest/gtest.h>
 
 TEST(MATRIX_OPS_TEST, vector_vector_mul) {

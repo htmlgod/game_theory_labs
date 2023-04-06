@@ -7,7 +7,9 @@
 #include <iostream>
 #include <iomanip>
 #include <set>
-#include <quotient.hpp>
+
+#include <common/quotient.hpp>
+
 template<typename T>
 void print_vector(const std::vector<T>& v, size_t setw = 3) {
     std::cout << "( ";

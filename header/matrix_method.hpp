@@ -2,8 +2,8 @@
 #include <tuple>
 #include <cassert>
 
-#include <quotient.hpp>
-#include <matrix_operations.hpp>
+#include <common/quotient.hpp>
+#include <common/matrix_operations.hpp>
 
 template <typename T>
 class MatrixMethodSolver {
