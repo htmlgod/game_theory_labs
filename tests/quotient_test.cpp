@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <quotient.hpp>
+#include <common/quotient.hpp>
 
 // use fixtures!!!!!
 TEST(QUOTIENT_TEST, construction_default) {

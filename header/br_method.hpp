@@ -3,7 +3,7 @@
 #include <map>
 #include <random>
 
-#include <matrix_operations.hpp>
+#include <common/matrix_operations.hpp>
 
 
 template<typename T>
