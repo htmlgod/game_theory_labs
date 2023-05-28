@@ -41,8 +41,8 @@ public:
             std::cout << "Iteration " << ITERATION << std::endl;
             std::cout << "Subgame:" << std::endl;
             auto subgame = get_subgame();
-
             print_matrix(subgame);
+
             // SOLVING SUBGAME
             if (subgame[0].size() == 1) { // solve 1 dimensional subgame
                 auto tmp = get_transposed_matrix(subgame);

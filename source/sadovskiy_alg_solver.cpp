@@ -1,15 +1,25 @@
 #include <sadovskiy_algorithm.hpp>
 
 auto main() -> int {
+//    std::vector<std::vector<double>> A = {
+//            {8, 12, 10},
+//            {1, 6, 19},
+//            {17, 11, 11}
+//    };
+//    std::vector<std::vector<double>> B = {
+//        {-8, -12, -10},
+//        {-1, -6, -19},
+//        {-17, -11, -11}
+//    };
     std::vector<std::vector<double>> A = {
-            {8, 12, 10},
-            {1, 6, 19},
-            {17, 11, 11}
+            {2, 1, 3},
+            {3, 0, 1},
+            {1, 2, 1}
     };
     std::vector<std::vector<double>> B = {
-        {-8, -12, -10},
-        {-1, -6, -19},
-        {-17, -11, -11}
+            {-2, -1, -3},
+            {-3, 0, -1},
+            {-1, -2, -1}
     };
     B = get_transposed_matrix(B);
     std::cout << "Player A" << '\n';
