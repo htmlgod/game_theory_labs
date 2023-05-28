@@ -49,7 +49,7 @@ private:
     T a, b, c, d, e;
     T player_B_strategies;
     T player_A_strategies;
-    T epsilon = 0.04;
+    T epsilon = 0.1;
     T h;
 
     std::vector<T> last_results;
