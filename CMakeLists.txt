@@ -24,7 +24,7 @@ add_executable(
 )
 add_executable(
     solver_LR1
-    ${CMAKE_CURRENT_SOURCE_DIR}/source/solver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/matrix_br_methods_solver.cpp
 )
 
 target_include_directories(

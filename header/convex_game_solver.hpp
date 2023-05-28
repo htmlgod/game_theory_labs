@@ -16,13 +16,17 @@ public:
     void solve() {
         std::cout << "Numerical solution: " << '\n';
         size_t N = 2;
-        while(!is_solving_finished(N)) {
+        T last_res = 0;
+        last_results.reserve(5);
+        //while(!is_solving_finished(N)) {
+        for (size_t N = 2; N < 120; ++N) {
             std::cout << "N = " << N << '\n';
             auto mesh = create_mesh(N);
             print_matrix(mesh, 10);
             get_saddle_point(mesh);
-            last_results.push_back(h);
-            ++N;
+            if (last_results.size() == 5) last_results[N % 5] = h;
+            else last_results.push_back(h);
+            if (is_solving_finished(N)) break;
         }
         //h = *std::max_element(last_results.begin(), last_results.end());
     }
@@ -45,26 +49,20 @@ private:
     T a, b, c, d, e;
     T player_B_strategies;
     T player_A_strategies;
-    T epsilon = 0.1;
+    T epsilon = 0.04;
     T h;
 
-    std::deque<T> last_results{5};
+    std::vector<T> last_results;
+    std::vector<T> deltas;
 
     auto H(T x, T y) -> T {
         return x*x*a + y*y*b + c*x*y + d*x + e*y;
     };
 
     bool is_solving_finished(size_t N) {
-        if (N <= 7) return false;
-        std::vector<T> check = {
-                last_results[0] - last_results[1],
-                last_results[1] - last_results[2],
-                last_results[2] - last_results[3],
-                last_results[3] - last_results[4]
-                };
-        auto differ = std::accumulate(last_results.begin(), last_results.end(), 0, std::minus<>());
-        return std::fabs(differ) <= epsilon;
-        //return std::all_of(check.begin(), check.end(), [=](T val) { return std::fabs(val) < epsilon; });
+        auto tmp = last_results;
+        std::sort(tmp.begin(), tmp.end());
+        return std::fabs((tmp[3] - tmp[4])) < epsilon and N > 7;
     }
 
     auto get_saddle_point(const matrix& m) {
@@ -94,10 +92,10 @@ private:
             std::cout << "x: " << player_A_strategies << ", y: " << player_B_strategies << ", H: " << h << std::endl;
         }
         else {
-            BRMethodSolver<double> br_solver{m, epsilon};
+            BRMethodSolver<double> br_solver{m, epsilon, 10};
             br_solver.init();
             br_solver.solve(false);
-            std::cout << "Solution given by Brown-Robinson method:" << std::endl;
+            std::cout << "No saddle point, solution by Brown-Robinson method:" << std::endl;
             auto [gc, player_A_solution, player_B_solution] = br_solver.get_solution();
             std::cout << "x: ";
             print_vector(player_A_solution, 4);

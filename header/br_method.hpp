@@ -5,16 +5,16 @@
 
 #include <common/matrix_operations.hpp>
 
-
 template<typename T>
 class BRMethodSolver {
 public:
-    BRMethodSolver(std::vector<std::vector<T>> gm, T de) {
+    BRMethodSolver(std::vector<std::vector<T>> gm, T de, size_t iter_count = 0) {
         std::copy(gm.begin(), gm.end(), std::back_inserter(game_matrix));
         size = game_matrix.size();
         playerA_win.resize(size);
         playerB_lose.resize(size);
         desired_epsilon = de;
+        amount_of_steps = iter_count;
     }
     void init() {
 
@@ -62,6 +62,7 @@ public:
             strategy_usage_B[B_strategy] += 1;
             epsilon = compute_epsilon(upper_game_costs, lower_game_costs);
             if (print_info) print_step();
+            if (amount_of_steps != 0 and K > amount_of_steps) break;
         }
         game_cost = compute_game_cost();
         player_A_strategies = compute_strategies(strategy_usage_A);
@@ -74,6 +75,7 @@ private:
     T desired_epsilon;
     T epsilon;
     T game_cost;
+    size_t amount_of_steps;
     size_t size;
     size_t K = 1; // STEP
     size_t A_strategy = 0;
@@ -159,18 +161,18 @@ private:
         std::cout << std::setw(3) << "STEP" << " | "
                   << std::setw(3) << "  x " << " | "
                   << std::setw(3) << "  y " << " | ";
-        std::cout << std::setw(4*size) << "A wins            " << " | ";
-        std::cout << std::setw(4*size) << "B Loses           " << " | ";
-        std::cout << std::setw(8) << "UGC" << " | " << std::setw(8) << "LGC" << " | " << "EPSILON";
+        std::cout << std::setw(9*size) << "A wins            " << " | ";
+        std::cout << std::setw(9*size) << "B Loses           " << " | ";
+        std::cout << std::setw(9) << "UGC" << " | " << std::setw(9) << "LGC" << " | " << "EPSILON";
         std::cout << std::endl;
     }
     void print_step() {
         std::cout << std::setw(4) << K << " | "
                   << std::setw(3) << "x" << A_strategy+1 << " | "
                   << std::setw(3) << "y" << B_strategy+1 << " | ";
-        for (T el : playerA_win) std::cout << std::setw(4) << el << " | ";
-        for (T el : playerB_lose) std::cout << std::setw(4) << el << " | ";
-        std::cout << std::setw(8) << upper_game_costs[K-1] << " | " << std::setw(8) << lower_game_costs[K-1] << " | " << epsilon;
+        for (T el : playerA_win) std::cout << std::setw(7) << el << " | ";
+        for (T el : playerB_lose) std::cout << std::setw(7) << el << " | ";
+        std::cout << std::setw(9) << upper_game_costs[K-1] << " | " << std::setw(9) << lower_game_costs[K-1] << " | " << epsilon;
         std::cout << std::endl;
     }
 };
