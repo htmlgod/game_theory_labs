@@ -34,6 +34,10 @@ add_executable(
     solver_LR5
     ${CMAKE_CURRENT_SOURCE_DIR}/source/information_borba.cpp
 )
+add_executable(
+    solver_LR6
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/coop_games.cpp
+)
 
 target_include_directories(
     solver_RK1
@@ -57,6 +61,11 @@ target_include_directories(
 )
 target_include_directories(
     solver_LR5
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/header
+)
+target_include_directories(
+    solver_LR6
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/header
 )
