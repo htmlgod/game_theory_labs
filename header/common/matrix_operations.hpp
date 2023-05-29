@@ -207,6 +207,16 @@ std::vector<T> matrix_vector_mul(const std::vector<std::vector<T>>& matrix, cons
     return std::move(result);
 }
 template<typename T>
+std::vector<std::vector<T>> matrix_matrix_mul(const std::vector<std::vector<T>>& a, const std::vector<std::vector<T>>& b) {
+    auto b_t = get_transposed_matrix(b);
+    std::vector<std::vector<T>> res;
+    res.reserve(a.size());
+    for (auto& row : a) {
+        res.push_back(vector_matrix_mul(row, b));
+    }
+    return res;
+}
+template<typename T>
 auto get_matrix_determinant(const std::vector<std::vector<T>>& matrix) {
     if (matrix.size() != matrix[0].size()) {
         throw std::logic_error("Matrix is not quadratic");

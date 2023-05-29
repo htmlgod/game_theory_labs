@@ -30,6 +30,10 @@ add_executable(
     solver_LR3
     ${CMAKE_CURRENT_SOURCE_DIR}/source/bimatrix_games.cpp
 )
+add_executable(
+    solver_LR5
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/information_borba.cpp
+)
 
 target_include_directories(
     solver_RK1
@@ -48,6 +52,11 @@ target_include_directories(
 )
 target_include_directories(
     solver_LR3
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/header
+)
+target_include_directories(
+    solver_LR5
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/header
 )

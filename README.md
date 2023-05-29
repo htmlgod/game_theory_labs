@@ -24,6 +24,15 @@ cmake --build _build --target solver_LR3
 ./_build/solver_LR3
 
 ```
+
+## LR5 (LR8)
+
+```
+cmake -S. -B_build
+cmake --build _build --target solver_LR5
+./_build/solver_LR5
+
+```
 ## RK1 (RK1)
 
 ```
