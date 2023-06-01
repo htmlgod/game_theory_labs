@@ -1,12 +1,12 @@
 #include <algorithm>
 #include <cmath>
+#include <string>
 #include <bitset>
 #include <iostream>
 #include <numeric>
 #include <vector>
+#include <map>
 #include <common/matrix_operations.hpp>
-//#include <ranges>
-
 
 constexpr size_t total_players = 4;
 
@@ -18,18 +18,6 @@ auto compute_factorial(int N) {
 size_t get_coalition_size(size_t c) {
     return std::bitset<total_players>(c).count();
 }
-
-//auto compute_shapley_for_player(size_t player) {
-//    auto is_present = [=](size_t i) {
-//        return i & (1 << player);
-//    }
-//    double result = 0;
-//    for (size_t i : std::ranges::iota(0, total_players) | std::views::filter(is_present)) {
-//        result += compute_factorial(get_coalition_size(i)-1)*compute_factorial(total_players-get_coalition_size(i))*(CF[i]-CF[i ^ 1 << player]);
-//    }
-//
-//    return result / compute_factorial(total_players);
-//}
 
 auto compute_shapley_for_player(size_t player, const std::vector<int>& CF, size_t amount_of_coalitions) {
     std::vector<int> all_coalitions(amount_of_coalitions);
@@ -47,27 +35,89 @@ auto compute_shapley_for_player(size_t player, const std::vector<int>& CF, size_
     return result / static_cast<double>(compute_factorial(total_players));
 }
 
-auto is_superadditive(const std::vector<int>& CF, size_t amount_of_coalitions, size_t& broken_t, size_t& broken_s) {
-    for (int s = 0; s < amount_of_coalitions; ++s) {
-        for (int t = 0; t < amount_of_coalitions; ++t) {
-            if ((s & t) != 0) continue;
-            if (CF[s | t] < (CF[s] + CF[t])) {
-                broken_t = t;
-                broken_s = s;
-                return false;
+auto compute_shapley_vec(const std::vector<int>& CF, size_t amount_of_coalitions) {
+    std::vector<double> sv(total_players);
+    for (size_t i = 0; i < total_players; ++i) {
+        sv[i] = compute_shapley_for_player(i, CF, amount_of_coalitions);
+    }
+    return sv;
+
+}
+
+std::string decode_coalition(int c) {
+    if (c == 0) return "(0)";
+    std::bitset<total_players> bitset(c);
+    std::string res = "";
+    int commas = bitset.count() -1 ;
+    for (size_t i = 0; i < total_players; ++i) {
+        if (bitset[i]) {
+            res += std::to_string(total_players - i);
+            if (commas != 0) {
+                --commas;
+                res += ", ";
             }
         }
     }
-    return true;
+    if (!res.empty()) res = "(" + res + ")";
+    return res;
 }
 
-auto is_convex(const std::vector<int>& CF, size_t amount_of_coalitions) {
+auto check_superadditivity(const std::vector<int>& CF, size_t amount_of_coalitions, std::multimap<size_t, std::vector<size_t>>& CS, bool print = false) {
+    auto result = true;
     for (int s = 0; s < amount_of_coalitions; ++s) {
         for (int t = 0; t < amount_of_coalitions; ++t) {
-            if ((CF[s | t] + CF[s & t]) < (CF[s] + CF[t])) return false;
+            if ((s & t) != 0) continue;
+            bool check = CF[s | t] < (CF[s] + CF[t]);
+            if (check) {
+                if (result) std::cout << "Supperadditivity (failed checks):\n";
+                result = false;
+                if (print) {
+                    std::cout << "CF[" << decode_coalition(s | t) << "] ";
+                    std::cout << "< GF[" <<decode_coalition(s) << "] + GF[" << decode_coalition(t) << "]\n";
+                }
+                CS.insert({s | t, {static_cast<size_t>(CF[s]), static_cast<size_t>(CF[t])}});
+            }
         }
     }
-    return true;
+    std::cout << "";
+    return result;
+}
+
+auto check_convex(const std::vector<int>& CF, size_t amount_of_coalitions, bool print = true) {
+    auto result = true;
+    for (int s = 0; s < amount_of_coalitions; ++s) {
+        for (int t = 0; t < amount_of_coalitions; ++t) {
+            bool check = (CF[s | t] + CF[s & t]) < (CF[s] + CF[t]);
+            if (check) {
+                if (result) std::cout << "Convex (failed checks):\n";
+                result = false;
+                if (print) {
+                    std::cout << "CF[" << decode_coalition(s | t) << "] ";
+                    std::cout << " + CF[" << decode_coalition(s & t) << "] ";
+                    std::cout << " < CF[" << decode_coalition(s) << "] + CF[" << decode_coalition(t) << "]\n";
+                }
+            }
+        }
+    }
+    return result;
+}
+
+void transform(std::vector<int>& CF, const std::multimap<size_t, std::vector<size_t>>& CS) {
+    std::map<size_t, std::vector<size_t>> sums;
+    std::cout << "Transforming to superadditive game using these coalition structures:\n";
+    for (const auto& [T, CSt] : CS) {
+        std::cout << decode_coalition(T) << " : ";
+        for (auto coalition : CSt) {
+            std::cout << decode_coalition(coalition) << " ";
+        }
+        std::cout << '\n';
+    }
+    for (const auto& [T, CSt] : CS) {
+        sums[T].push_back(std::reduce(CSt.cbegin(), CSt.cend()));
+    }
+    for (const auto& [T, CSt] : sums) {
+        CF[T] = *std::max_element(CSt.cbegin(), CSt.cend());
+    }
 }
 
 auto main() -> int {
@@ -89,45 +139,58 @@ auto main() -> int {
     CF[0xD] = 9;
     CF[0xE] = 10; 
     CF[0xF] = 12;
-    size_t broken_t = 0;
-    size_t broken_s = 0;
-    auto is_supadd = is_superadditive(CF, amount_of_coalitions, broken_t, broken_s);
-    std::cout << "Game properties:\n";
-    std::cout << "\tis" << (is_supadd ? "" : " not") << " Superadditive\n";
-    std::cout << "\tis" << (is_convex(CF, amount_of_coalitions) ? "" : " not") << " Convex\n";
 
-    while (!is_superadditive(CF, amount_of_coalitions, broken_t, broken_s)) {
-        std::vector<size_t> CS = {
-            broken_s,
-            broken_t
-        };
-        CF[broken_s | broken_t] = *std::max_element(CS.begin(), CS.end());
-        broken_t = 0;
-        broken_s = 0;
-    }
-    is_supadd = is_superadditive(CF, amount_of_coalitions, broken_t, broken_s);
-    std::cout << "Game properties (after transformation into superadditive):\n";
+    std::cout << "Initial CF vector:\n";
+    std::cout << std::string(75, '=')  << '\n';
+    print_vector(CF);
+
+
+    std::cout << "\nChecking properties:\n";
+    std::cout << std::string(75, '=')  << '\n';
+
+    std::multimap<size_t, std::vector<size_t>> cs;
+    auto is_supadd = check_superadditivity(CF, amount_of_coalitions, cs, true);
+    std::cout << std::string(75, '=')  << '\n';
+    auto is_convex = check_convex(CF, amount_of_coalitions);
+    std::cout << "Game properties after check:\n";
     std::cout << "\tis" << (is_supadd ? "" : " not") << " Superadditive\n";
-    std::cout << "\tis" << (is_convex(CF, amount_of_coalitions) ? "" : " not") << " Convex\n";
+    std::cout << "\tis" << (is_convex ? "" : " not") << " Convex\n";
+
+    std::cout << "\nTransform non-superadditive game to superadditive:\n";
+    std::cout << std::string(75, '=')  << '\n';
+    transform(CF, cs);
+
+    std::cout << "\nChecking properties after transform:\n";
+    std::cout << std::string(75, '=')  << '\n';
+    is_supadd = check_superadditivity(CF, amount_of_coalitions, cs);
+    is_convex = check_convex(CF, amount_of_coalitions);
+    std::cout << "Game properties after check:\n";
+    std::cout << "\tis" << (is_supadd ? "" : " not") << " Superadditive\n";
+    std::cout << "\tis" << (is_convex ? "" : " not") << " Convex\n";
+    std::cout << "\nCF vector after transform:\n";
+    std::cout << std::string(75, '=')  << '\n';
+    print_vector(CF);
 
     std::cout << "\n\nShapley Vector: ";
-    std::vector<double> sv(total_players);
-    std::cout << "(";
-    for (size_t i = 0; i < total_players; ++i) {
-        sv[i] = compute_shapley_for_player(i, CF, amount_of_coalitions);
-        std::cout << sv[i] << " ";
-    }
-    std::cout << ")\n\n\n";
+    auto sv = compute_shapley_vec(CF, amount_of_coalitions);
+    print_vector(sv);
+    std::cout << std::string(75, '=')  << '\n';
 
-    auto check_group_rationalisation = [](std::vector<double> sv, std::vector<int> CF) {
-        return CF[0xF] == std::reduce(sv.begin(),sv.end());
-    };
-    std::cout << "Game conditions:\n";
-    std::cout << "\tgroup rationalisation is" << (check_group_rationalisation(sv, CF) ? "" : " not") << " met\n";
-    std::cout << "\tindividual rationalisation:\n";
-    for (size_t i = 0; i < total_players; ++i) {
-        std::cout << "\t\tPlayer " << i << ": condition is" << ( sv[i] > CF[1 << i] ? "" : " not") << " met\n";
-    }
 
+    std::cout << "\nGame conditions:\n";
+    std::cout << std::string(75, '=')  << '\n';
+
+    std::cout << "Group rationalisation:\n";
+    std::cout << "CF[(4,3,2,1)] == " << std::reduce(sv.begin(),sv.end()) << ";\n";
+    std::cout << CF[0xF] << " == " << std::reduce(sv.begin(), sv.end()) << '\n';
+
+    std::cout << "\nIndividual rationalisation:\n";
+    for (size_t i = 0; i < total_players; ++i) {
+        auto ir = sv[i] >= CF[1 << i];
+        std::cout << "\tPlayer " << i << ": condition is" << ( ir  ? "" : " not") << " met\n";
+        if (!ir) {
+            std::cout << "\tx" << i << "(CF) < " << "CF[(" << i << ")]\n";
+        }
+    }
     return 0;
 }

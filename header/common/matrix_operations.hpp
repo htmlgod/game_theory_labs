@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <cassert>
 #include <exception>
 #include <functional>
 #include <numeric>
@@ -11,12 +12,21 @@
 #include <common/quotient.hpp>
 
 template<typename T>
-void print_vector(const std::vector<T>& v, size_t setw = 3, std::string msg = "") {
+void print_vector(const std::vector<T>& v, size_t setw = 3, size_t precision = 0, std::string msg = "") {
+    const auto default_precision {std::cout.precision()};
     std::cout << msg << "( ";
     for (const auto& el : v) {
-        std::cout << std::setw(setw) << el << " ";
+        if (precision != 0) std::cout << std::right << std::setprecision(precision) << std::fixed << std::setw(setw) << el << " ";
+        else std::cout << std::setw(setw) << el << " ";
     }
+    std::cout << std::defaultfloat << std::setprecision(default_precision);
     std::cout << ")" << std::endl;
+}
+template<typename T>
+void print_matrix(const std::vector<std::vector<T>>& m, size_t setw = 7, size_t precision = 0) {
+    for (const auto& row : m) {
+        print_vector(row, setw, precision);
+    }
 }
 
 template<typename T>
@@ -26,6 +36,15 @@ size_t get_min_element_index(const std::vector<T>& vec) {
 template<typename T>
 size_t get_max_element_index(const std::vector<T>& vec) {
     return std::distance(vec.begin(), std::max_element(vec.begin(), vec.end()));
+}
+template<typename T>
+T get_max_element(const std::vector<T>& vec) {
+    return *std::max_element(vec.begin(), vec.end());
+}
+
+template<typename T>
+T get_min_element(const std::vector<T>& vec) {
+    return *std::min_element(vec.begin(), vec.end());
 }
 template<typename T>
 auto get_transposed_matrix(const std::vector<std::vector<T>>& matrix) {
@@ -125,15 +144,6 @@ std::vector<T> operator+(std::vector<T> lhs, std::vector<T> rhs) {
     return res;
 }
 
-template<typename T>
-T get_max_element(const std::vector<T>& vec) {
-    return *std::max_element(vec.begin(), vec.end());
-}
-
-template<typename T>
-T get_min_element(const std::vector<T>& vec) {
-    return *std::min_element(vec.begin(), vec.end());
-}
 
 
 template<typename T>
@@ -148,12 +158,6 @@ void fill(std::vector<std::vector<T> >& vec, size_t size){
 }
 
 
-template<typename T>
-void print_matrix(const std::vector<std::vector<T>>& m, size_t setw = 7) {
-    for (const auto& row : m) {
-        print_vector(row, setw);
-    }
-}
 
 template<typename T>
 T vector_vector_mul(const std::vector<T>& v1, const std::vector<T>& v2) {

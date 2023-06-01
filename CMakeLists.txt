@@ -31,6 +31,10 @@ add_executable(
     ${CMAKE_CURRENT_SOURCE_DIR}/source/bimatrix_games.cpp
 )
 add_executable(
+    solver_LR4
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/backward_induction.cpp
+)
+add_executable(
     solver_LR5
     ${CMAKE_CURRENT_SOURCE_DIR}/source/information_borba.cpp
 )
