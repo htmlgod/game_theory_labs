@@ -2,6 +2,8 @@
 #include <string>
 #include <random>
 
+
+// COLORS FOR PARETO, NASH AND BOTH
 std::ostream& bold_on(std::ostream& os)
 {
     return os << "\e[1m";
@@ -44,8 +46,10 @@ void solve_mixed(const std::vector<std::vector<double>>& A, const std::vector<st
 
     std::vector<double> x = number_vector_mul(v_2, vector_matrix_mul(u, inv_B));
     std::vector<double> y = number_vector_mul(v_1, matrix_vector_mul(inv_A, u));
-    print_vector(x, 3, "x = ");
-    print_vector(y, 3, "y = ");
+    std::cout << "x = ";
+    print_vector(x, 3);
+    std::cout << "y = ";
+    print_vector(y, 3);
     std::cout << "v1 = " << v_1 << "; v2 = " << v_2 << '\n';
 }
 
@@ -61,8 +65,17 @@ bool check_pareto(size_t io, size_t jo, const std::vector<std::vector<T>>& A, co
 
 template<typename T>
 bool check_nash(size_t io, size_t jo, const std::vector<std::vector<T>>& A, const std::vector<std::vector<T>>& B) {
-    auto A_t = get_transposed_matrix(A);
-    return io == get_max_element_index(A_t[jo]) and jo == get_max_element_index(B[io]);
+    // auto A_t = get_transposed_matrix(A);
+    // return io == get_max_element_index(A_t[jo]) and jo == get_max_element_index(B[io]);
+    auto check_a = A[io][jo];
+    auto check_b = B[io][jo];
+    for (size_t i = 0; i < A.size(); ++i) {
+        if (A[i][jo] > check_a) return false;
+        for (size_t j = 0; j < A[0].size(); ++j) {
+            if (B[io][j] > check_b) return false;
+        }
+    }
+    return true;
 }
 
 auto gen_rand_gamematrix(size_t row_size = 10, size_t col_size = 10, int lower_bound = -50, int upper_bound = 50) {

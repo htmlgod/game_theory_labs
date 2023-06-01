@@ -17,16 +17,20 @@ public:
         std::cout << "Numerical solution: " << '\n';
         size_t N = 2;
         T last_res = 0;
-        last_results.reserve(5);
+        deltas.reserve(5);
         //while(!is_solving_finished(N)) {
-        for (size_t N = 2; N < 120; ++N) {
+        for (;;) {
             std::cout << "N = " << N << '\n';
             auto mesh = create_mesh(N);
-            print_matrix(mesh, 10);
-            get_saddle_point(mesh);
-            if (last_results.size() == 5) last_results[N % 5] = h;
-            else last_results.push_back(h);
+            if (N < 11) print_matrix(mesh, 6, 3);
+            get_saddle_point(mesh, N);
+            auto delta = std::abs(h-last_res);
+            if (deltas.size() == 5) deltas[N % 5] = delta;
+            else deltas.push_back(delta);
+            last_res = h;
+            //if (deltas.size() == 5) print_vector(deltas);
             if (is_solving_finished(N)) break;
+            N++;
         }
         //h = *std::max_element(last_results.begin(), last_results.end());
     }
@@ -42,6 +46,7 @@ public:
 
         return true;
     }
+
     [[nodiscard]] std::tuple<T, T, T> get_solution() const {
         return {h, player_A_strategies, player_B_strategies};
     }
@@ -49,10 +54,9 @@ private:
     T a, b, c, d, e;
     T player_B_strategies;
     T player_A_strategies;
-    T epsilon = 0.1;
+    T epsilon = 0.05;
     T h;
 
-    std::vector<T> last_results;
     std::vector<T> deltas;
 
     auto H(T x, T y) -> T {
@@ -60,12 +64,11 @@ private:
     };
 
     bool is_solving_finished(size_t N) {
-        auto tmp = last_results;
-        std::sort(tmp.begin(), tmp.end());
-        return std::fabs((tmp[3] - tmp[4])) < epsilon and N > 7;
+        // return std::all_of(deltas.begin(), deltas.end(), [&](double l) { return l < epsilon; }) and N > 6;
+        return std::reduce(deltas.begin(), deltas.end()) < epsilon and N > 6;
     }
 
-    auto get_saddle_point(const matrix& m) {
+    auto get_saddle_point(const matrix& m, size_t N) {
         std::vector<double> min_row;
         min_row.reserve(m.size());
 
@@ -97,10 +100,12 @@ private:
             br_solver.solve(false);
             std::cout << "No saddle point, solution by Brown-Robinson method:" << std::endl;
             auto [gc, player_A_solution, player_B_solution] = br_solver.get_solution();
-            std::cout << "x: ";
-            print_vector(player_A_solution, 4);
-            std::cout << "y: ";
-            print_vector(player_B_solution, 4);
+            if (N < 12) {
+                std::cout << "x: ";
+                print_vector(player_A_solution, 4);
+                std::cout << "y: ";
+                print_vector(player_B_solution, 4);
+            }
             std::cout << "Game Cost v = " << gc << std::endl;
             h = gc;
         }

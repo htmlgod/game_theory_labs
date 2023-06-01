@@ -43,7 +43,7 @@ auto gen_trust_matrix(size_t size = 10) {
 }
 
 auto get_xt(const trust_matrix& tm, const std::vector<double>& x0, size_t& iter_count) {
-    double epsilon = 0.000001;
+    double epsilon = 0.000001; // check here
     iter_count = 0;
     auto tmp = tm;
     auto xt = x0;
@@ -52,6 +52,8 @@ auto get_xt(const trust_matrix& tm, const std::vector<double>& x0, size_t& iter_
         xt = matrix_vector_mul(tmp, x0);
         iter_count++;
     }
+    std::cout << "Resulting trust matrix: \n";
+    print_matrix(tmp, 5);
     return xt;
 }
 auto get_shuffled_indices(size_t size = 10) {
@@ -75,11 +77,11 @@ auto main() -> int {
 
     std::cout << "Trust matrix: \n";
     auto tm = gen_trust_matrix();
-    print_matrix(tm, 12);
+    print_matrix(tm, 6,6); // precision here
 
-    std::cout << "Starting agents opinions (vector x_0): \n";
+    std::cout << "\nStarting agents opinions (vector x_0): \n";
     auto x0 = gen_rand_vec_int(1, 20);
-    print_vector(x0);
+    print_vector(x0, 4, 0);
 
     size_t iter;
     auto xt = get_xt(tm, x0, iter);

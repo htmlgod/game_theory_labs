@@ -24,6 +24,13 @@ cmake --build _build --target solver_LR3
 ./_build/solver_LR3
 
 ```
+## LR4 (LR6)
+
+```
+cmake -S. -B_build
+cmake --build _build --target solver_LR4
+./_build/solver_LR4 && dot -Tpng -Gimagescale=true -Gdpi=1000 out.gv -o result1.png && open result1.png
+```
 
 ## LR5 (LR8)
 
