@@ -18,7 +18,6 @@ public:
         size_t N = 2;
         T last_res = 0;
         deltas.reserve(5);
-        //while(!is_solving_finished(N)) {
         for (;;) {
             std::cout << "N = " << N << '\n';
             auto mesh = create_mesh(N);
@@ -28,11 +27,9 @@ public:
             if (deltas.size() == 5) deltas[N % 5] = delta;
             else deltas.push_back(delta);
             last_res = h;
-            //if (deltas.size() == 5) print_vector(deltas);
             if (is_solving_finished(N)) break;
             N++;
         }
-        //h = *std::max_element(last_results.begin(), last_results.end());
     }
 
     bool solve_analytic() {
@@ -64,7 +61,6 @@ private:
     };
 
     bool is_solving_finished(size_t N) {
-        // return std::all_of(deltas.begin(), deltas.end(), [&](double l) { return l < epsilon; }) and N > 6;
         return std::reduce(deltas.begin(), deltas.end()) < epsilon and N > 6;
     }
 
