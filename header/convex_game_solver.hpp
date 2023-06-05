@@ -17,17 +17,16 @@ public:
         std::cout << "Numerical solution: " << '\n';
         size_t N = 2;
         T last_res = 0;
-        deltas.reserve(5);
+        deltas.resize(5);
         for (;;) {
             std::cout << "N = " << N << '\n';
             auto mesh = create_mesh(N);
             if (N < 11) print_matrix(mesh, 6, 3);
             get_saddle_point(mesh, N);
-            auto delta = std::abs(h-last_res);
-            if (deltas.size() == 5) deltas[N % 5] = delta;
-            else deltas.push_back(delta);
-            last_res = h;
             if (is_solving_finished(N)) break;
+            auto delta = std::fabs(std::fabs(h) - std::fabs(last_res));
+            deltas[N % 5] = delta;
+            last_res = std::fabs(h);
             N++;
         }
     }
@@ -61,7 +60,10 @@ private:
     };
 
     bool is_solving_finished(size_t N) {
-        return std::reduce(deltas.begin(), deltas.end()) < epsilon and N > 6;
+        if (N < 10) return false;
+        T tmp = std::reduce(deltas.begin(), deltas.end());
+        // std::cout << "DELTAS SUM ========== " << tmp << "\n";
+        return std::fabs(tmp) < epsilon;
     }
 
     auto get_saddle_point(const matrix& m, size_t N) {
@@ -98,11 +100,11 @@ private:
             auto [gc, player_A_solution, player_B_solution] = br_solver.get_solution();
             if (N < 12) {
                 std::cout << "x: ";
-                print_vector(player_A_solution, 4);
+                print_vector(player_A_solution, 4, 4);
                 std::cout << "y: ";
-                print_vector(player_B_solution, 4);
+                print_vector(player_B_solution, 4, 4);
             }
-            std::cout << "Game Cost v = " << gc << std::endl;
+            std::cout << "H : " << gc << std::endl;
             h = gc;
         }
     }

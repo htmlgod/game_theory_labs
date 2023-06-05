@@ -29,13 +29,29 @@ void print_matrix(const std::vector<std::vector<T>>& m, size_t setw = 7, size_t 
     }
 }
 
+// template<typename T>
+// size_t get_min_element_index(const std::vector<T>& vec) {
+//     return std::distance(vec.begin(), std::min_element(vec.begin(), vec.end()));
+// }
+// template<typename T>
+// size_t get_max_element_index(const std::vector<T>& vec) {
+//     return std::distance(vec.begin(), std::max_element(vec.begin(), vec.end()));
+// }
 template<typename T>
-size_t get_min_element_index(const std::vector<T>& vec) {
-    return std::distance(vec.begin(), std::min_element(vec.begin(), vec.end()));
+size_t get_min_element_index(const std::vector<T>& vec, bool strict = true) {
+    return std::distance(vec.begin(), std::min_element(vec.begin(), vec.end(), (strict ? [](T a, T b) {
+                    return a > b;
+                    } : [](T a, T b) { 
+                    return a >= b;
+                    })));
 }
 template<typename T>
-size_t get_max_element_index(const std::vector<T>& vec) {
-    return std::distance(vec.begin(), std::max_element(vec.begin(), vec.end()));
+size_t get_max_element_index(const std::vector<T>& vec, bool strict = true) {
+    return std::distance(vec.begin(), std::max_element(vec.begin(), vec.end(), (strict ? [](T a, T b) {
+                    return a < b;
+                    } : [](T a, T b) { 
+                    return a <= b;
+                    })));
 }
 template<typename T>
 T get_max_element(const std::vector<T>& vec) {

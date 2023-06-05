@@ -14,6 +14,7 @@ auto main() -> int {
         {
             solver.solve();
             auto[gc, player_A_solution, player_B_solution] = solver.get_solution();
+            std::cout << "RESULT:\n";
             std::cout << "Player A strategy: ";
             std::cout << player_A_solution << std::endl;
             std::cout << "Player B strategy: ";
