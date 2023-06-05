@@ -115,7 +115,7 @@ int main(int argc, const char * argv[]) {
         };
         for (size_t i = 0; i < A.size(); ++i) {
             for (size_t j = 0; j < A.front().size(); ++j) {
-                pretty_print(A[i][j], B[i][j], check_nash(i,j,A,B), check_pareto(i,j,A,B), 4);
+                pretty_print(A[i][j], B[i][j], check_nash(i,j,A,B), check_pareto(i,j,A,B), 5);
             }
             std::cout << '\n';
         }
