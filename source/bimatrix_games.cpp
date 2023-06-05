@@ -1,5 +1,6 @@
 #include <common/matrix_operations.hpp>
 #include <string>
+#include <sstream>
 #include <random>
 
 
@@ -20,17 +21,14 @@ std::ostream& red_off(std::ostream& os) {
 }
 
 template<typename T>
-void pretty_print(T A, T B, bool is_nash_opt, bool is_pareto_opt) {
-    auto old_setw = std::cout.width(4);
+void pretty_print(T A, T B, bool is_nash_opt, bool is_pareto_opt, size_t setw = 4, size_t el_setw = 3) {
     if (is_nash_opt) std::cout << bold_on;
     if (is_pareto_opt) std::cout << red_on;
-    std::cout.width(9);
-    std::string buf = '(' + std::to_string(A) + '|' + std::to_string(B) + ')';
-    std::cout << buf;
-    std::cout.width(4);
+    std::ostringstream oss;
+    oss << '(' << std::setw(el_setw) << A << '|' << std::setw(el_setw) << B << ')';
+    std::cout << std::setw(setw) << oss.str();
     if (is_pareto_opt) std::cout << red_off;
     if (is_nash_opt) std::cout << bold_off;
-    std::cout.width(old_setw);
 }
 
 void solve_mixed(const std::vector<std::vector<double>>& A, const std::vector<std::vector<double>>& B) {
@@ -65,25 +63,19 @@ bool check_pareto(size_t io, size_t jo, const std::vector<std::vector<T>>& A, co
 
 template<typename T>
 bool check_nash(size_t io, size_t jo, const std::vector<std::vector<T>>& A, const std::vector<std::vector<T>>& B) {
-    // auto A_t = get_transposed_matrix(A);
-    // return io == get_max_element_index(A_t[jo]) and jo == get_max_element_index(B[io]);
-    auto check_a = A[io][jo];
-    auto check_b = B[io][jo];
-    for (size_t i = 0; i < A.size(); ++i) {
-        if (A[i][jo] > check_a) return false;
-        for (size_t j = 0; j < A[0].size(); ++j) {
-            if (B[io][j] > check_b) return false;
-        }
-    }
-    return true;
+    auto A_t = get_transposed_matrix(A);
+    return jo == get_max_element_index(B[io]) and io == get_max_element_index(A_t[jo]);
+
 }
 
-auto gen_rand_gamematrix(size_t row_size = 10, size_t col_size = 10, int lower_bound = -50, int upper_bound = 50) {
+auto gen_rand_gamematrix(size_t seed = 0, size_t row_size = 10, size_t col_size = 10, int lower_bound = -50, int upper_bound = 50) {
     std::vector<std::vector<int>> gm;
     gm.resize(row_size);
     for (auto& row : gm) row.resize(col_size);
     std::random_device rd;
-    std::mt19937 gen(rd());
+    if (seed == 0) auto seed = rd();
+    std::cout << "seed = " << seed << '\n';
+    std::mt19937 gen(seed);
     std::uniform_int_distribution<> distrib(lower_bound, upper_bound);
     for (auto& row : gm) {
         for (auto& el : row) {
@@ -94,14 +86,14 @@ auto gen_rand_gamematrix(size_t row_size = 10, size_t col_size = 10, int lower_b
 }
 
 int main(int argc, const char * argv[]) {
-    std::cout << "Hint: " << red_on << "Pareto optimal" << red_off << ", " << bold_on << "Nash equilibrium" << bold_off << ", " << red_on << bold_on << "Both" << red_off << bold_off << '\n' << '\n'; 
     std::cout << std::string(60, '=') << '\n';
+    std::cout << "Hint: " << red_on << "Pareto optimal" << red_off << ", " << bold_on << "Nash equilibrium" << bold_off << ", " << red_on << bold_on << "Both" << red_off << bold_off << '\n' << '\n'; 
     {
-        auto A = gen_rand_gamematrix();
-        auto B = gen_rand_gamematrix();
+        auto A = gen_rand_gamematrix(3161171797);
+        auto B = gen_rand_gamematrix(2155087560);
         for (size_t i = 0; i < A.size(); ++i) {
             for (size_t j = 0; j < B.front().size(); ++j) {
-                pretty_print(A[i][j], B[i][j], check_nash(i,j,A,B), check_pareto(i,j,A,B));
+                pretty_print(A[i][j], B[i][j], check_nash<int>(i,j,A,B), check_pareto(i,j,A,B), 10);
             }
             std::cout << '\n';
         }
@@ -109,19 +101,21 @@ int main(int argc, const char * argv[]) {
     {
         std::cout << std::string(60, '=') << '\n';
         std::cout << "Crossroad " << '\n';
-        double eps = 0.1;
-        std::cout << "epsilon = " << eps << '\n';
+        double epsA = 0.1;
+        double epsB = 0.4;
+        std::cout << "epsilonA = " << epsA << '\n';
+        std::cout << "epsilonB = " << epsB << '\n';
         std::vector<std::vector<double>> A = {
-            {1, 1-eps},
+            {-1, 1-epsA},
             {2, 0}
         };
         std::vector<std::vector<double>> B = {
-            {1, 2},
-            {1-eps, 0}
+            {-1, 2},
+            {1-epsB, 0}
         };
         for (size_t i = 0; i < A.size(); ++i) {
             for (size_t j = 0; j < A.front().size(); ++j) {
-                pretty_print(A[i][j], B[i][j], check_nash(i,j,A,B), check_pareto(i,j,A,B));
+                pretty_print(A[i][j], B[i][j], check_nash(i,j,A,B), check_pareto(i,j,A,B), 4);
             }
             std::cout << '\n';
         }
