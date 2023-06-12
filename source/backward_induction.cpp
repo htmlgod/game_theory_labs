@@ -5,7 +5,6 @@
 #include <random>
 #include <map>
 
-
 std::random_device rd; 
 std::mt19937 gen(rd());
 
@@ -21,6 +20,7 @@ auto find_maximums(const std::vector<int>& v) {
 
    return indexes;
 }
+
 auto find_maximums(const std::vector<std::vector<int>>& v, size_t player) {
     std::vector<size_t> indexes;
     //std::cout << "[ ";
@@ -73,9 +73,10 @@ struct node {
 };
 
 size_t compute_vertexes_amount(size_t depth, std::vector<size_t> strategies_amount) {
-    size_t amount = 1;
+    size_t amount = 0;
     size_t prev_val = 1;
     auto total_players = strategies_amount.size();
+    //1*3 + 3*2 + 3*2*3 = 27
     for (size_t i = 0; i < depth; ++i) {
         auto val = prev_val * strategies_amount[i % total_players];
         amount += val;
@@ -86,10 +87,9 @@ size_t compute_vertexes_amount(size_t depth, std::vector<size_t> strategies_amou
 
 class graph {
 public:
-    graph(size_t depth = 6, int lower_bound = 0, int upper_bound = 20, size_t players_amount = 2, std::vector<size_t>&& strategies_amount = {2,3}) {
+    graph(size_t depth = 6, std::vector<size_t>&& strategies_amount = {2,3}, int lower_bound = 0, int upper_bound = 20, size_t players_amount = 2) {
         root = new node(0);
         root->parent = nullptr;
-        //root->vertex_num = 0;
         root->player = 0;
         this->total_vertexes = compute_vertexes_amount(depth, strategies_amount);
         this->depth = depth;
@@ -108,8 +108,8 @@ public:
         return res;
     }
 
-    void create_leaves(node* leaf, size_t current_depth = 0) {
-        if (index == total_vertexes or current_depth == depth) {
+    void create_leaves(node* leaf, size_t current_depth = 1) {
+        if (index == total_vertexes or current_depth - 1 == depth) {
             leaf->paths.push_back(gen_wins());
             return;
         }
@@ -271,10 +271,8 @@ private:
 };
 
 auto main() -> int {
-//    std::cout << compute_vertexes_amount(2, {2,3});
-    //graph g(3);
-    graph g{};
-//    g.make_reverse_step();
+    graph g{3};
+    //std::cout << compute_vertexes_amount(3, {2,3});
     g.solve_by_backward_induction();
     g.write_graph_to_file();
     return 0;
