@@ -54,3 +54,12 @@ cmake -S. -B_build -DBUILD_TESTS=On
 cmake --build _build --target solver_RK1
 ./_build/solver_RK1
 ```
+## RK2 (RK2)
+
+```
+cd search_games
+python3 -m venv env
+source ./env/bin/activate
+pip3 install -r requirements.txt
+python3 search.py
+```
